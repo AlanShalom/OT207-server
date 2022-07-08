@@ -3,6 +3,7 @@ package com.alkemy.ong.auth.config;
 import com.alkemy.ong.auth.filter.JwtRequestFilter;
 import com.alkemy.ong.auth.service.impl.UserDetailsCustomService;
 import com.alkemy.ong.enums.RolName;
+import com.alkemy.ong.domain.util.Url;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +49,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable()
                 .authorizeRequests().antMatchers("/auth/login", "/auth/register","/api-docs/**","/swagger-ui*/*").permitAll()
                 .antMatchers("/auth/users", "/auth/users/*", "/api/assets/upload").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
+                .antMatchers("/categories/page","/news/page").hasAnyAuthority(RolName.ROLE_USER.toString())
                 .antMatchers(HttpMethod.POST, "/slides").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
                 .antMatchers(HttpMethod.GET, "/slides").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
                 .antMatchers(HttpMethod.DELETE, "/slides/{id}").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
@@ -66,8 +68,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/categories/{id}").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
                 .antMatchers(HttpMethod.POST, "/organization/public").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
                 .antMatchers(HttpMethod.GET, "/organization/public").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
+                .antMatchers(HttpMethod.GET, "/organization/public/{organizationId}").hasAnyAuthority(RolName.ROLE_USER.toString())
                 .antMatchers(HttpMethod.GET, "/comments").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
-                .antMatchers(HttpMethod.DELETE, "/members/{id}").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
+                .antMatchers(HttpMethod.DELETE, Url.MEMBERS_URI + "/{id}").hasAnyAuthority(RolName.ROLE_ADMIN.toString())
                 .anyRequest().authenticated()
                 .and().exceptionHandling()
                 .and().sessionManagement()

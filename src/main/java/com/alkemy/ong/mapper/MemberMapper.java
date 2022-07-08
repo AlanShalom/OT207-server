@@ -1,7 +1,10 @@
 package com.alkemy.ong.mapper;
 
+import com.alkemy.ong.domain.model.News;
 import com.alkemy.ong.dto.MemberDTO;
-import com.alkemy.ong.model.Member;
+import com.alkemy.ong.domain.model.Member;
+import com.alkemy.ong.dto.NewsDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -43,16 +46,22 @@ public class MemberMapper {
     }
 
 
-    public void memberDto2EntityWithId(Member memberEntity, MemberDto dto) {
+    public void memberDto2EntityWithId(Member memberEntity, MemberDTO dto) {
         setAttributerMemberDto2Entity(dto,memberEntity);
     }
 
-    private void setAttributerMemberDto2Entity(MemberDto memberDto, Member memberEntity) {
+    private void setAttributerMemberDto2Entity(MemberDTO memberDto, Member memberEntity) {
         memberEntity.setName(memberDto.getName());
         memberEntity.setFacebookUrl(memberDto.getFacebookUrl());
         memberEntity.setInstragramUrl(memberDto.getInstagramUrl());
         memberEntity.setLinkedinUrl(memberDto.getLinkedinUrl());
         memberEntity.setDescription(memberDto.getDescription());
         memberEntity.setImage(memberDto.getImage());
+    }
+
+    public List<MemberDTO> membersEntityPage2Dto(Page<Member> members) {
+        List<MemberDTO> membersDTO = new ArrayList<>();
+        members.getContent().forEach(entity -> membersDTO.add (this.memberEntityToMemberDto(entity)));
+        return membersDTO;
     }
 }

@@ -1,44 +1,55 @@
 package com.alkemy.ong.controller;
 
+
+import com.alkemy.ong.domain.model.Organization;
+import com.alkemy.ong.domain.service.IOrganizationService;
+import com.alkemy.ong.domain.service.ISlideService;
+import com.alkemy.ong.domain.util.Url;
 import com.alkemy.ong.dto.OrganizationDTO;
 import com.alkemy.ong.dto.OrganizationUpdateDTO;
 import com.alkemy.ong.exception.BadRequestException;
-import com.alkemy.ong.model.Organization;
-import com.alkemy.ong.service.IOrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import javax.validation.Valid;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/organization")
+@RequestMapping(Url.ORGANIZATION_URI)
 public class OrganizationController {
 
     @Autowired
-    private IOrganizationService organization;
+    private IOrganizationService organizationService;
+
+    @Autowired
+    private ISlideService slidesService;
 
     @GetMapping("/public")
-    public ResponseEntity<List<OrganizationDTO>> getOrganizationDTO(){
-        List<OrganizationDTO> organizationDTOS = this.organization.findAll();
-        return ResponseEntity.ok().body(organizationDTOS);
+    public ResponseEntity<OrganizationDTO> getOrganizationDTO(){
+        OrganizationDTO organizationDTO = this.organizationService.getOrg();
+        return ResponseEntity.ok().body(organizationDTO);
     }
-    
-    
+
+
     @PostMapping("/public")
     public ResponseEntity<OrganizationUpdateDTO> putUpdateOrganization (@RequestBody @Valid OrganizationUpdateDTO orgUpdate, BindingResult bindingResult){
-    if (bindingResult.hasErrors()){
-        throw new BadRequestException(bindingResult);
+        if (bindingResult.hasErrors()){
+            throw new BadRequestException(bindingResult);
+        }
+        Organization org = organizationService.updateOrganizationDto(orgUpdate);
+        organizationService.updateOrganization(org);
+        return ResponseEntity.ok().body(orgUpdate);
     }
-    Organization org = organization.updateOrganizationDto(orgUpdate);
-    organization.updateOrganization(org);
-    return ResponseEntity.ok().body(orgUpdate);
+
+    @PostMapping
+    public ResponseEntity<OrganizationDTO> addOrganization(@Valid @RequestBody OrganizationDTO organizationDTO, BindingResult result) {
+        if (result.hasErrors()) {
+            throw new BadRequestException(result);
+        }
+        OrganizationDTO organizationDto = organizationService.addOrganization(organizationDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(organizationDto);
 }
 
 

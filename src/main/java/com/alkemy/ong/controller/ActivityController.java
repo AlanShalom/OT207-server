@@ -1,19 +1,19 @@
 package com.alkemy.ong.controller;
 
+import com.alkemy.ong.domain.util.Url;
 import com.alkemy.ong.dto.ActivityDTO;
 import com.alkemy.ong.exception.BadRequestException;
-import com.alkemy.ong.service.IActivityService;
-
-import javax.validation.Valid;
-
+import com.alkemy.ong.domain.service.IActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
-@RequestMapping("/activities")
+@RequestMapping(Url.ACTIVITIES_URI)
 public class ActivityController {
 
     @Autowired
